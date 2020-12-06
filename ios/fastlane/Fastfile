@@ -73,22 +73,58 @@ platform :ios do
     )
   end
   lane :build_ios do
-    build_ios_app(
-      workspace: 'iosCiCdDemo.xcworkspace', 
-      scheme: 'iosCiCdDemo',
-      clean: true,
-      output_directory: 'build-ipa', # Destination directory. Defaults to current directory.
-      include_bitcode: true,
-      include_symbols: true,
-      export_method: 'ad-hoc',
-      output_name: 'build.ipa',
-      export_team_id: 'XG7L4W66FJ',
-      export_options: {
-          method: 'ad-hoc',
-          provisioningProfiles: { 
-            'com.abccicd.pro' => 'IOS_CICD_DEMO_APP_ADHOC.mobileprovision 1607234211',
+      increment_build_number(
+        build_number: "2" # set a specific number
+      )
+      increment_version_number(
+        version_number: "1.0.0" # Set a specific version number
+      )
+      build_ios_app(
+        workspace: 'iosCiCdDemo.xcworkspace', 
+        scheme: 'iosCiCdDemo',
+        clean: true,
+        output_directory: 'build-ipa', # Destination directory. Defaults to current directory.
+        include_bitcode: true,
+        include_symbols: true,
+        export_method: 'ad-hoc',
+        output_name: 'build.ipa',
+        export_team_id: 'XG7L4W66FJ',
+        export_options: {
+            method: 'ad-hoc',
+            provisioningProfiles: { 
+              'com.abccicd.pro' => 'IOS_CICD_DEMO_APP_ADHOC.mobileprovision 1607234211',
+          }
         }
-      }
-  )
+    )
+  end
+  lane :pre_build_setup do
+    # fastlane_dir = %x(pwd)
+    # absolute_path = Pathname.new(File.expand_path(fastlane_dir)).parent
+    cocoapods(
+      clean_install: true,
+      podfile: "./Podfile"
+    )
+    # sh "pwd"
+    # Dir.chdir("../..") do
+    #   sh 'pwd'
+    #   sh 'git pull'
+    #   sh 'yarn'
+    # end
+    # Dir.chdir("..") do
+    #   sh 'pwd'
+    #   sh 'pod install'
+    # end
+  end
+  lane :git_action do
+    Dir.chdir("../..") do
+      sh 'pwd'
+      sh 'git pull'
+      sh 'yarn'
+    end
+  end
+  lane :run_all do
+    git_action
+    pre_build_setup
+    build_ios
   end
 end

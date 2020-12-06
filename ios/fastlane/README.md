@@ -31,6 +31,21 @@ fastlane ios match_all
 fastlane ios build_ios
 ```
 
+### ios pre_build_setup
+```
+fastlane ios pre_build_setup
+```
+
+### ios git_action
+```
+fastlane ios git_action
+```
+
+### ios run_all
+```
+fastlane ios run_all
+```
+
 
 ----
 
